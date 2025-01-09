@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Use the Next.js router for navigation
 
-const LoginPage = () => {
+export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -59,5 +59,3 @@ const LoginPage = () => {
     </div>
   );
 };
-
-export default LoginPage;
