@@ -4,14 +4,13 @@ import { Status } from "@prisma/client";
 
 export async function PUT(req: Request, context: { params: { id: string } }) {
     try {
-        // Awaiting params
-        const { id } = await context.params;
-        
+        const { id } = context.params; // No need for await
+
         const body = await req.json();
         const { status } = body;
 
         // Validate ID format
-        if (!id || typeof id !== "string") {
+        if (!id) {
             return new NextResponse("Invalid order ID", { status: 400 });
         }
 
@@ -45,11 +44,20 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
     try {
-      await prismadb.order.delete({
-        where: { id: params.id },
-      });
-      return new Response("Order deleted successfully", { status: 200 });
+        const { id } = params; // Destructure id from params
+
+        // Check if ID is provided
+        if (!id) {
+            return new NextResponse("Invalid order ID", { status: 400 });
+        }
+
+        await prismadb.order.delete({
+            where: { id },
+        });
+
+        return new NextResponse("Order deleted successfully", { status: 200 });
     } catch (error) {
-      return new Response("Failed to delete order", { status: 500 });
+        console.error("[ORDER_DELETE_ERROR]", error);
+        return new NextResponse("Failed to delete order", { status: 500 });
     }
-  }
+}
